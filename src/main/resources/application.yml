@@ -2,20 +2,11 @@ spring:
   application:
     name: TransDoc
 jodconverter:
-  local:
+  remote:
     enabled: true
-    format-options:
-      html:
-        store:
-          TEXT:
-            FilterOptions: EmbedImages
-
-      xhtml:
-        store:
-          TEXT:
-            FilterOptions: EmbedImages
-    office-home: /Applications/LibreOffice.app/Contents
-    template-profile-dir: /Users/jaewon/Downloads/jodconverter-profile-template
+    url: http://localhost:2002
+    socket-timeout: 300000
+    connect-timeout: 300000
 logging:
   level:
     org.jodconverter: DEBUG
