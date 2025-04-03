@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: TransDoc
+jodconverter:
+  local:
+    enabled: true
+    format-options:
+      html:
+        store:
+          TEXT:
+            FilterOptions: EmbedImages
+
+      xhtml:
+        store:
+          TEXT:
+            FilterOptions: EmbedImages
+    office-home: /Applications/LibreOffice.app/Contents
+    template-profile-dir: /Users/jaewon/Downloads/jodconverter-profile-template
+logging:
+  level:
+    org.jodconverter: DEBUG
