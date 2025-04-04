@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.LocalConverter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,15 +24,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class ConverterController {
 
-    private final DocumentConverter documentConverter;
+    private final OfficeManager officeManager;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> convertToPdf(@RequestParam("file") MultipartFile file)
         throws IOException, OfficeException {
+
+        DocumentConverter converter = LocalConverter.make(officeManager);
+
         try(ByteArrayOutputStream baos = new ByteArrayOutputStream()){
             log.info("convert start");
 
-            documentConverter.convert(file.getInputStream()).to(baos).as(DefaultDocumentFormatRegistry.PDF).execute();
+            converter.convert(file.getInputStream()).to(baos).as(DefaultDocumentFormatRegistry.PDF).execute();
 
             log.info("convert end");
 
