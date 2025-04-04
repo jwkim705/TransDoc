@@ -1,7 +1,10 @@
 package com.rsupport.TransDoc.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.DocumentConverter;
@@ -9,6 +12,7 @@ import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.LocalConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ConverterController {
 
     private final OfficeManager officeManager;
+
+    @Value("${jodconverter.local.working-dir}")
+    private String workingDir;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> convertToPdf(@RequestParam("file") MultipartFile file)
@@ -46,43 +53,35 @@ public class ConverterController {
         }
     }
 
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<FileSystemResource> convertToPdfCommend(@RequestParam("file") MultipartFile file) {
-//
-//        try {
-//        File tempInput = File.createTempFile("input_",".tmp", new File("/Users/jaewon/Downloads/jodconverter-profile-template"));
-//        file.transferTo(tempInput);
-//
-////        File convertedPdf = new File("/Users/jaewon/Downloads/jodconverter-profile-template", tempInput.getName().replace(".tmp", ".pdf"));
-//
-//            ProcessBuilder processBuilder = new ProcessBuilder(
-//                    "/Applications/LibreOffice.app/Contents/MacOS/soffice",
-//                    "--headless",
-//                    "--convert-to",
-//                    "pdf",
-//                    "--outdir",
-//                    "/Users/jaewon/Downloads/jodconverter-profile-template",
-//                    tempInput.getAbsolutePath()
-//            );
-//            processBuilder.redirectErrorStream(true);
-//
-//            Process process = processBuilder.start();
-//            int exitCode = process.waitFor();
-//            if (exitCode != 0) {
-//                throw new RuntimeException("변환 중 오류 발생");
-//            }
-//
-//            // 변환된 PDF 파일을 클라이언트에게 전송
-//            FileSystemResource resource = new FileSystemResource(tempInput.getAbsolutePath());
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + tempInput.getName());
-//
-//            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    @PostMapping(path = "/path", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> convertToPdfResPath(@RequestParam("file") MultipartFile file)
+        throws IOException, OfficeException {
 
 
+        String outputFileName = "converted_" + System.currentTimeMillis() + ".pdf"; // Unique file name
+        File outputFile = new File(workingDir, outputFileName);
+
+        if (!outputFile.getParentFile().exists()) {
+            boolean dirsCreated = outputFile.getParentFile().mkdirs();
+            if (!dirsCreated) {
+                throw new IOException("Failed to create output directory: " + workingDir);
+            }
+        }
+
+        DocumentConverter converter = LocalConverter.make(officeManager);
+
+        try(OutputStream os = new FileOutputStream(outputFile)){
+            log.info("convert start");
+
+            converter.convert(file.getInputStream()).to(os).as(DefaultDocumentFormatRegistry.PDF).execute();
+
+            log.info("convert end");
+
+            String filePath = outputFile.getAbsolutePath();
+                    return ResponseEntity.ok(filePath);
+        } catch (Exception e) {
+            log.error("Error during file conversion", e);
+            throw e; // Re-throw exception for handling
+        }
+    }
 }
