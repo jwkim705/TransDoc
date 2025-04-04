@@ -14,8 +14,7 @@ jodconverter:
         store:
           TEXT:
             FilterOptions: EmbedImages
-    office-home: /Applications/LibreOffice.app/Contents
-    template-profile-dir: /Users/jaewon/Downloads/jodconverter-profile-template
+    office-home: /usr/lib64/libreoffice
 logging:
   level:
     org.jodconverter: DEBUG
