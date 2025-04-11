@@ -27,8 +27,6 @@ import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.office.OfficeException;
-import org.jodconverter.core.office.OfficeManager;
-import org.jodconverter.local.LocalConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,7 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class ConverterController {
 
-    private final OfficeManager officeManager;
+    private final DocumentConverter converter; // 재사용!
+    private final CustomDocumentFormatRegistry formatRegistry; // 재사용!
 
     @Value("${jodconverter.local.working-dir}")
     private String workingDir;
@@ -108,11 +107,10 @@ public class ConverterController {
      * 파일을 PDF 바이트 배열로 변환
      */
     private byte[] convertFileToPdfBytes(MultipartFile file) throws IOException, OfficeException {
-        DocumentConverter converter = createDocumentConverter();
         log.info("PDF 변환 시작: {}", file.getOriginalFilename());
 
         String extension = Objects.requireNonNull(FilenameUtils.getExtension(file.getOriginalFilename())).toLowerCase();
-        DocumentFormat inputFormat = DefaultDocumentFormatRegistry.getFormatByExtension(extension);
+        DocumentFormat inputFormat = formatRegistry.getFormatByExtension(extension);
         if (inputFormat == null) {
             throw new IllegalArgumentException("지원하지 않는 파일 형식입니다: " + extension);
         }
@@ -138,12 +136,11 @@ public class ConverterController {
         File outputFile = new File(datePath.toString(), outputFileName);
 
         String extension = Objects.requireNonNull(FilenameUtils.getExtension(file.getOriginalFilename())).toLowerCase();
-        DocumentFormat inputFormat = DefaultDocumentFormatRegistry.getFormatByExtension(extension);
+        DocumentFormat inputFormat = formatRegistry.getFormatByExtension(extension);
         if (inputFormat == null) {
             throw new IllegalArgumentException("지원하지 않는 파일 형식입니다: " + extension);
         }
 
-        DocumentConverter converter = createDocumentConverter();
         log.info("PDF 변환 및 저장 시작: {}", file.getOriginalFilename());
 
         try (OutputStream outputStream = new FileOutputStream(outputFile)) {
@@ -167,8 +164,6 @@ public class ConverterController {
             Path datePath = getDateBasedPath();
             String uniqueFileName = generateUniqueFileName(file.getOriginalFilename());
             File outputFile = new File(datePath.toString(), uniqueFileName);
-
-            DocumentConverter converter = createDocumentConverter();
 
             // JODConverter를 사용하여 파일 변환
             try (InputStream inputStream = file.getInputStream();
@@ -201,16 +196,6 @@ public class ConverterController {
         }
 
         return datePath;
-    }
-
-    /**
-     * 문서 변환기 생성
-     */
-    private DocumentConverter createDocumentConverter() {
-        return LocalConverter.builder()
-                .officeManager(officeManager)
-                .formatRegistry(new CustomDocumentFormatRegistry())
-                .build();
     }
 
     /**
