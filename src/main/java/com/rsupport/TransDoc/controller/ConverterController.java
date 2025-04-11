@@ -2,6 +2,7 @@ package com.rsupport.TransDoc.controller;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+import com.rsupport.TransDoc.config.CustomDocumentFormatRegistry;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -206,7 +207,10 @@ public class ConverterController {
      * 문서 변환기 생성
      */
     private DocumentConverter createDocumentConverter() {
-        return LocalConverter.make(officeManager);
+        return LocalConverter.builder()
+                .officeManager(officeManager)
+                .formatRegistry(new CustomDocumentFormatRegistry())
+                .build();
     }
 
     /**
