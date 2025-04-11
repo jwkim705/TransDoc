@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 public class DocumentConfig {
 
     @Bean
+    @Primary
     public CustomDocumentFormatRegistry customDocumentFormatRegistry() {
         return new CustomDocumentFormatRegistry();
     }
