@@ -16,7 +16,6 @@ public class CustomDocumentFormatRegistry extends SimpleDocumentFormatRegistry {
                 .mediaType("application/x-hwp")
                 .inputFamily(DocumentFamily.TEXT)
                 .build();
-        addFormat(hwp);
 
         // HWPX 등록
         DocumentFormat hwpx = DocumentFormat.builder()
@@ -25,6 +24,26 @@ public class CustomDocumentFormatRegistry extends SimpleDocumentFormatRegistry {
                 .mediaType("application/x-hwpml")
                 .inputFamily(DocumentFamily.TEXT)
                 .build();
+
+        // PPT 형식 등록 (PowerPoint 97-2003)
+        DocumentFormat ppt = DocumentFormat.builder()
+            .name("Microsoft PowerPoint")
+            .extension("ppt")
+            .mediaType("application/vnd.ms-powerpoint")
+            .inputFamily(DocumentFamily.PRESENTATION)
+            .build();
+
+        // PPTX 형식 등록 (PowerPoint 2007+)
+        DocumentFormat pptx = DocumentFormat.builder()
+            .name("Microsoft PowerPoint Open XML")
+            .extension("pptx")
+            .mediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation")
+            .inputFamily(DocumentFamily.PRESENTATION)
+            .build();
+
+        addFormat(hwp);
         addFormat(hwpx);
+        addFormat(ppt);
+        addFormat(pptx);
     }
 }
