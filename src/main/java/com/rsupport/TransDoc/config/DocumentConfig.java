@@ -23,11 +23,12 @@ public class DocumentConfig {
     public DocumentConverter documentConverter(OfficeManager officeManager,
                                                CustomDocumentFormatRegistry registry) {
         Map<String, Object> filterData = new HashMap<>();
+        filterData.put("PageFitToPages", 1);
 
-        Map<String, Object> singlePageSheetProps = new HashMap<>();
-        singlePageSheetProps.put("type", "boolean");
-        singlePageSheetProps.put("value", true);
-        filterData.put("SinglePageSheets", singlePageSheetProps);
+//        Map<String, Object> singlePageSheetProps = new HashMap<>();
+//        singlePageSheetProps.put("type", "boolean");
+//        singlePageSheetProps.put("value", true);
+//        filterData.put("SinglePageSheets", singlePageSheetProps);
 
         Map<String, Object> storeProperties = new HashMap<>();
         storeProperties.put("FilterName", "calc_pdf_Export"); // Calc PDF 내보내기 필터 지정
