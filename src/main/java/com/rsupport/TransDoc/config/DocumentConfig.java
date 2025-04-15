@@ -22,8 +22,8 @@ public class DocumentConfig {
     @Primary
     public DocumentConverter documentConverter(OfficeManager officeManager,
                                                CustomDocumentFormatRegistry registry) {
-        Map<String, Object> filterData = new HashMap<>();
-        filterData.put("PageFitToPages", 1);
+//        Map<String, Object> filterData = new HashMap<>();
+//        filterData.put("PageFitToPages", 1);
 
 //        Map<String, Object> singlePageSheetProps = new HashMap<>();
 //        singlePageSheetProps.put("type", "boolean");
@@ -32,7 +32,10 @@ public class DocumentConfig {
 
         Map<String, Object> storeProperties = new HashMap<>();
         storeProperties.put("FilterName", "calc_pdf_Export"); // Calc PDF 내보내기 필터 지정
-        storeProperties.put("FilterData", filterData);
+        storeProperties.put("FilterData", Map.of(
+        "ReduceImageResolution", true,
+        "MaxImageResolution", 300
+        ));
 
         return LocalConverter.builder()
                 .officeManager(officeManager)
