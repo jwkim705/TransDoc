@@ -38,8 +38,7 @@ public class DocumentConfig {
             "ScaleToPagesX", 1,
             "ScaleToPagesY", 1,
             "ReduceImageResolution", true,
-            "MaxImageResolution", 300,
-            "PageFitToPages", 1
+            "MaxImageResolution", 300
         ));
 
         return LocalConverter.builder()
