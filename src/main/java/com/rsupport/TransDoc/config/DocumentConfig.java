@@ -22,28 +22,22 @@ public class DocumentConfig {
     @Primary
     public DocumentConverter documentConverter(OfficeManager officeManager,
                                                CustomDocumentFormatRegistry registry) {
-        Map<String, Object> properties = new HashMap<>();
+        Map<String, Object> filterData = new HashMap<>();
 
-        // Calc to PDF 변환 옵션
-        properties.put("FilterData", getFilterData());
-        properties.put("FilterOptions", "PrintAllSheets");
+        Map<String, Object> singlePageSheetProps = new HashMap<>();
+        singlePageSheetProps.put("type", "boolean");
+        singlePageSheetProps.put("value", true);
+        filterData.put("SinglePageSheets", singlePageSheetProps);
+
+        Map<String, Object> storeProperties = new HashMap<>();
+        storeProperties.put("FilterName", "calc_pdf_Export"); // Calc PDF 내보내기 필터 지정
+        storeProperties.put("FilterData", filterData);
 
         return LocalConverter.builder()
                 .officeManager(officeManager)
-                .storeProperties(properties)
+                .storeProperties(storeProperties)
                 .formatRegistry(registry)
                 .build();
     }
 
-    private Map<String, Object> getFilterData() {
-        Map<String, Object> filterData = new HashMap<>();
-
-        // 내보내기 옵션
-        Map<String, Object> exportOptions = new HashMap<>();
-        exportOptions.put("SinglePageSheets", true);  // 각 시트를 별도 페이지로 설정
-        exportOptions.put("ExportNotes", false);
-
-        filterData.put("CalcExportSettings", exportOptions);
-        return filterData;
-    }
 }
