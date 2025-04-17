@@ -3,6 +3,9 @@ package com.rsupport.TransDoc.config;
 import java.util.HashMap;
 import java.util.Map;
 import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.document.DocumentFamily;
+import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.LocalConverter;
 import org.springframework.context.annotation.Bean;
@@ -22,15 +25,11 @@ public class DocumentConfig {
     @Primary
     public DocumentConverter documentConverter(OfficeManager officeManager,
                                                CustomDocumentFormatRegistry registry) {
-        Map<String, Object> filterData = new HashMap<>();
-
-        Map<String, Object> singlePageSheetProps = new HashMap<>();
-        singlePageSheetProps.put("type", "boolean");
-        singlePageSheetProps.put("value", true);
-        filterData.put("SinglePageSheets", singlePageSheetProps);
-
         Map<String, Object> storeProperties = new HashMap<>();
-        storeProperties.put("FilterName", "calc_pdf_Export"); // Calc PDF 내보내기 필터 지정
+        storeProperties.put("FilterName", "calc_pdf_Export");
+        Map<String, Object> filterData = new HashMap<>();
+        filterData.put("SinglePageSheets", true);
+//        filterData.put("OpenInFullScreenMode", true);
         storeProperties.put("FilterData", filterData);
 
         return LocalConverter.builder()

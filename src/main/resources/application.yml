@@ -1,6 +1,10 @@
 spring:
   application:
     name: TransDoc
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 jodconverter:
   local:
     enabled: true
@@ -14,7 +18,9 @@ jodconverter:
         store:
           TEXT:
             FilterOptions: EmbedImages
-    office-home: /usr/lib64/libreoffice
+    office-home: /Applications/LibreOffice.app/Contents
+    template-profile-dir: /Users/jaewon/Downloads/jodconverter-profile-template
+    working-dir: /Users/jaewon/upload
 logging:
   level:
     org.jodconverter: DEBUG
