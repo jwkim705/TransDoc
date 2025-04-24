@@ -18,9 +18,9 @@ jodconverter:
         store:
           TEXT:
             FilterOptions: EmbedImages
-    office-home: /Applications/LibreOffice.app/Contents
-    template-profile-dir: /Users/jaewon/Downloads/jodconverter-profile-template
-    working-dir: /Users/jaewon/upload
+    office-home: /opt/libreoffice25.2
+    working-dir: /DATA/shared_files
 logging:
+  config: /DATA/WEB/API/config/logback-spring.xml
   level:
     org.jodconverter: DEBUG
